@@ -10,7 +10,7 @@
     body {
         background: #fff;
         font-family: 'Inter', sans-serif;
-
+        overflow: hidden;
     }
 
     #item {
@@ -36,26 +36,91 @@
         font-size: 28px;
         color: #333;
     }
+
+    #txtTime {
+        font-size: 14px;
+        color: #666;
+        float: inline-end;
+    }
 </style>
 
 <body>
     <div style=" display: flex; flex-direction: column; align-items: center;">
-        <div
-            style="flex:1; font-size:38px;color:#000000; margin-bottom:20px; display: flex;text-align: center; ">
-            <b style="font-size:50px; color:#143A63">DANH SÁCH YÊU CẦU HỖ TRỢ TỪ BỆNH NHÂN</b>
+        <div style="flex:1; font-size:38px;color:#000000; margin-bottom:20px; display: flex;text-align: center; ">
+            <b style="font-size:50px; color:#214724">DANH SÁCH YÊU CẦU HỖ TRỢ TỪ BỆNH NHÂN</b>
             <br />
         </div>
         <div style="flex:1;width: 80%;">
-            <div id="room1" style="flex: 0.8; flex-direction: column; background: #ebebeb; border-radius: 5px; padding: 15px 25px 25px 25px;">
+            <div id="room1"
+                style="flex: 0.8; flex-direction: column; background: #ebebeb; border-radius: 5px; padding: 15px 25px 25px 25px; height: 70vh; overflow-y: auto">
             </div>
         </div>
     </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const dataContainer = document.getElementById('room1');
+            function formatTimeDiff(timeDiffInSeconds) {
+                if (timeDiffInSeconds < 30) {
+                    return 'vài giây trước';
+                } else if (timeDiffInSeconds < 3600) {
+                    var minutes = Math.floor(timeDiffInSeconds / 60);
+                    return minutes + ' phút trước';
+                } else if (timeDiffInSeconds < 86400) {
+                    var hours = Math.floor(timeDiffInSeconds / 3600);
+                    return hours + ' giờ trước';
+                } else {
+                    var currentTime = new Date();
+                    var serverTime = new Date(currentTime.getTime() - timeDiffInSeconds * 1000);
+                    var day = serverTime.getDate();
+                    var month = serverTime.getMonth() + 1;
+                    var year = serverTime.getFullYear();
+                    var hours = serverTime.getHours();
+                    var minutes = serverTime.getMinutes();
+                    if(minutes == 0){
+                        return hours.toString().padStart(2, '0') + ' giờ, ' + 'ngày '+ day + '/' + month + '/' + year;
+                    }else{
+                        return hours.toString().padStart(2, '0') + ' giờ ' + minutes + ' phút, ngày ' + day + '/' + month + '/' + year;
+                    }
+
+                    
+                }
+            }
+
+            function comparePostTime(postTime) {
+                var currentTime = new Date(); // Lấy thời gian hiện tại
+                var serverTime = new Date(postTime); // Lấy thời gian từ máy chủ
+                var timeDiff = Math.floor((currentTime - serverTime) / 1000); // Tính khoảng thời gian (đổi sang giây)
+
+                // Chuyển đổi khoảng thời gian sang 'phút', 'giờ' hoặc 'ngày/tháng/năm'
+                var timeAgo;
+                if (timeDiff < 60) {
+                    timeAgo = timeDiff + ' giây trước';
+                } else if (timeDiff < 3600) {
+                    var minutes = Math.floor(timeDiff / 60);
+                    timeAgo = minutes + ' phút trước';
+                } else if (timeDiff < 43200) {
+                    var hours = Math.floor(timeDiff / 3600);
+                    timeAgo = hours + ' giờ trước';
+                } else {
+                    var days = Math.floor(timeDiff / 86400);
+                    var monthNames = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+                    var day = serverTime.getDate();
+                    var monthIndex = serverTime.getMonth();
+                    var year = serverTime.getFullYear();
+                    timeAgo = day + ' ' + monthNames[monthIndex] + ' ' + year;
+                }
+
+                return timeAgo;
+            }
 
             // Hàm để hiển thị một mục mới
             function displayNewItem(item) {
+                var serverTime = new Date(item.time); // Lấy thời gian từ máy chủ
+                var currentTime = new Date(); // Lấy thời gian hiện tại
+
+                // Tính khoảng thời gian giữa thời gian hiện tại và thời gian nhận được từ máy chủ
+                var timeDiffInSeconds = Math.floor((currentTime - serverTime) / 1000);
+
                 const itemRoom = document.createElement('div');
                 itemRoom.id = "item"
 
@@ -69,11 +134,17 @@
 
                 const requirement = document.createElement('span');
                 requirement.id = "txtRequirement"
-                requirement.textContent = "Hết nước";
+                requirement.textContent = item.requirement;
+
+                const time = document.createElement('span');
+                time.id = "txtTime"
+                // time.textContent = comparePostTime(item.time);
+                time.textContent = formatTimeDiff(timeDiffInSeconds);
 
                 itemRoom.appendChild(nameRoom)
                 itemRoom.appendChild(text)
                 itemRoom.appendChild(requirement)
+                itemRoom.appendChild(time)
                 dataContainer.appendChild(itemRoom);
             }
             function fetchData() {
@@ -104,6 +175,7 @@
                 // Display fetched data
                 data.reverse().forEach(item => {
                     displayNewItem(item);
+
                 });
             }
             fetchData();

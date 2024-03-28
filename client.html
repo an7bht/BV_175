@@ -42,7 +42,7 @@
         }
 
         body {
-            background: #B2D9EA;
+            /* background: #B2D9EA; */
             font-family: 'Inter', sans-serif;
             background-image: url("./background.jpg");
             background-repeat: no-repeat;
@@ -68,7 +68,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(to bottom right, #2B87B9, #30A1DA);
+            background: linear-gradient(to bottom right, #198039, #198039);
             width: 100%;
             height: 200px;
             border-radius: 20px;
@@ -77,13 +77,14 @@
         .item-input-radio {
             background: #fff;
             border-radius: 20px;
-            display: flex;
             align-items: center;
             font-size: 38px;
             height: 100px;
             padding: 0 30px;
-            margin: 20px 30px;
-            border: 1px solid #333;
+            border: 1px solid #214724;
+            color:#214724;
+            width: 100%;
+            margin: 10px 0px;
         }
 
         .item-input-radio input {
@@ -95,11 +96,11 @@
         }
 
         .item-input-radio span {
-            color: #143A63;
+            color: #214724;
         }
 
         input[name="radio"] {
-            accent-color: #143A63;
+            accent-color: #214724;
         }
 
         .scroolbar-css::-webkit-scrollbar {
@@ -109,41 +110,27 @@
     </style>
     <div class="container">
         <div id="content-title"
-            style="font-size:38px;padding: 0 30px;color:#000000; margin-bottom:50px;margin-top:50px;">
-            <b style="font-size:66px; color:#143A63">Xin chào,</b>
+            style="font-size:38px;padding: 0 30px;color:#214724; margin-bottom:50px;margin-top:0px;">
+            <b style="font-size:66px; color:#214724">Xin chào,</b>
             <br />
-            Chọn loại yêu cầu sau đó bấm nút bên dưới để yêu cầu hỗ trợ
+            Bấm vào yêu cầu cần hỗ trợ
         </div>
-        <div class="" style="width:100%">
-            <div class="content" style="margin-bottom:20px">
-                <div id="input-radio">
-                    <label class="item-input-radio">
-                        <input type="radio" name="radio" value="Chăm sóc đặc biệt" />
-                        <span style="width:100%">Chăm sóc đặc biệt</span>
-                    </label>
-                    <label class="item-input-radio">
-                        <input type="radio" name="radio" value="Hỗ trợ sức khỏe" />
-                        <span style="width:100%">Hỗ trợ sức khỏe</span>
-                    </label>
-                    <label class="item-input-radio">
-                        <input type="radio" name="radio" value="Thiết bị điện bị hỏng" />
-                        <span style="width:100%">Thiết bị điện bị hỏng</span>
-                    </label>
+        <div class="" style="display: flex; flex-direction: column;">
+            <div class="content" style="margin-bottom:20px; flex:1">
+                <div id="input-radio" style="flex-direction: column; margin: 0px 20px;">
+                    <button onclick="Post('Gọi bác sĩ')" class="item-input-radio">
+                        Gọi bác sĩ
+                    </button>
+                    <button onclick="Post('Gọi món')" class="item-input-radio">
+                        Gọi món
+                    </button>
+                    <button onclick="Post('Dịch vụ tivi')" class="item-input-radio">
+                        Dịch vụ tivi
+                    </button>
+                    
                 </div>
             </div>
-            <label
-                style="background: #fff;border-radius: 20px;display: none;align-items: flex-start;padding: 30px;margin: 20px 30px;">
-                <textarea type="text"
-                    style="border:none; outline:none; font-size:38px; width:100%;resize:none;height:250px"
-                    class="scroolbar-css" value="" placeholder="Yêu cầu cụ thể (nếu có)"></textarea>
-            </label>
             <div id="call-support">
-                <div id="call-support-sub" onclick="Post()">
-                    <div id="call-supprot-sub-sub" style="text-align:center;">
-                        <span style="font-size:50px;letter-spacing:2px ;color:#FFFFFF; font-weight:bold">Gọi nhân viên
-                            đến hỗ trợ</span>
-                    </div>
-                </div>
                 <div id="call-support-sub-handle"
                     style="display:none;height:350px; background:#EBEBEBCC;padding:30px; ;justify-content:center">
                     <div id="wait-handle-sub-sub" style="text-align:center;">
@@ -159,9 +146,6 @@
 
 </body>
 <script>
-    // Checked giá trị đầu tiên
-    $('input[type=radio]').prop('checked', false)[0].checked = true;
-
     // Hiển thị bảng gửi yêu cầu hoặc thông báo chờ nhân viên
     var show = true;
     function ShowHideControl() {
@@ -180,11 +164,13 @@
         }
     }
 
-    function Post() {
+    function Post(content) {
+        console.log(new Date().toISOString())
         ShowHideControl();
         const jsonData = { // Dữ liệu JSON bạn muốn gửi
             name: 'Phòng 01',
-            requirement: $('input[name=radio]:checked').val()
+            requirement: content,
+            time: new Date().toISOString()
         };
 
         // Tạo một đối tượng cài đặt yêu cầu fetch
