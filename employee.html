@@ -62,6 +62,9 @@
             const dataContainer = document.getElementById('room1');
             
             function formatTimeDiff(timeDiffInSeconds) {
+                if(timeDiffInSeconds < 300){
+                        $("#txtTime").css("color", "#e50000");
+                }
                 if (timeDiffInSeconds < 30) {
                     return 'vài giây trước';
                 }
@@ -69,9 +72,6 @@
                     return '30 giây trước';
                 }
                 else if (timeDiffInSeconds < 3600) {
-                    if(timeDiffInSeconds < 300){
-                        $("#txtTime").css("color", "#e50000");
-                    }
                     var minutes = Math.floor(timeDiffInSeconds / 60);
                     return minutes + ' phút trước';
                 } else if (timeDiffInSeconds < 86400) {
