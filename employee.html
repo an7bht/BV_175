@@ -40,8 +40,13 @@
 
     #txtTime {
         font-size: 14px;
-        color: #666;
         float: inline-end;
+        color: #666
+    }
+    #txtTimeRed {
+        font-size: 14px;
+        float: inline-end;
+        color:#e50000
     }
 </style>
 
@@ -62,9 +67,6 @@
             const dataContainer = document.getElementById('room1');
             
             function formatTimeDiff(timeDiffInSeconds) {
-                if(timeDiffInSeconds < 300){
-                        $("#txtTime").css("color", "#e50000");
-                }
                 if (timeDiffInSeconds < 30) {
                     return 'vài giây trước';
                 }
@@ -146,9 +148,15 @@
                 requirement.textContent = item.requirement;
 
                 const time = document.createElement('p');
-                time.id = "txtTime"
+                if(timeDiffInSeconds < 301){
+                    time.id = "txtTimeRed"
+                }else{
+                    time.id = "txtTime"
+                }
+                
                 // time.textContent = comparePostTime(item.time);
                 time.textContent = formatTimeDiff(timeDiffInSeconds);
+                
 
                 itemRoom.appendChild(nameRoom)
                 itemRoom.appendChild(text)
