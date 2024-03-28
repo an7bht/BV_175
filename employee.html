@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nhan Vien</title>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
 </head>
 <style>
     body {
@@ -59,10 +60,18 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const dataContainer = document.getElementById('room1');
+            
             function formatTimeDiff(timeDiffInSeconds) {
                 if (timeDiffInSeconds < 30) {
-                    return 'vài giây trước';
-                } else if (timeDiffInSeconds < 3600) {
+                    return 'vài giây trước';
+                }
+                else if(timeDiffInSeconds < 60){
+                    return '30 giây trước';
+                }
+                else if (timeDiffInSeconds < 3600) {
+                    if(timeDiffInSeconds < 300){
+                        $("#txtTime").css("color", "#e50000");
+                    }
                     var minutes = Math.floor(timeDiffInSeconds / 60);
                     return minutes + ' phút trước';
                 } else if (timeDiffInSeconds < 86400) {
@@ -136,7 +145,7 @@
                 requirement.id = "txtRequirement"
                 requirement.textContent = item.requirement;
 
-                const time = document.createElement('span');
+                const time = document.createElement('p');
                 time.id = "txtTime"
                 // time.textContent = comparePostTime(item.time);
                 time.textContent = formatTimeDiff(timeDiffInSeconds);
@@ -165,7 +174,7 @@
                     })
                     .finally(() => {
                         // Lặp lại gửi yêu cầu lấy dữ liệu sau 5 giây
-                        setTimeout(fetchData, 3000);
+                        //setTimeout(fetchData, 3000);
                     });
             }
             // Function to display data in the HTML
