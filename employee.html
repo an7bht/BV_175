@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhan Vien</title>
+</head>
+<style>
+    body {
+        background: #fff;
+        font-family: 'Inter', sans-serif;
+
+    }
+
+    #item {
+        background: #ffffff;
+        border: 1px solid #198039;
+        padding: 25px;
+        border-radius: 10px;
+        margin-top: 10px;
+    }
+
+    #txtName,
+    #txtRequirement {
+        font-size: 28px;
+        font-weight: 600;
+        color: #198039;
+    }
+
+    #txtName {
+        color: #e50000;
+    }
+
+    #text {
+        font-size: 28px;
+        color: #333;
+    }
+</style>
+
+<body>
+    <div style=" display: flex; flex-direction: column; align-items: center;">
+        <div
+            style="flex:1; font-size:38px;color:#000000; margin-bottom:20px; display: flex;text-align: center; ">
+            <b style="font-size:50px; color:#143A63">DANH SÁCH YÊU CẦU HỖ TRỢ TỪ BỆNH NHÂN</b>
+            <br />
+        </div>
+        <div style="flex:1;width: 80%;">
+            <div id="room1" style="flex: 0.8; flex-direction: column; background: #ebebeb; border-radius: 5px; padding: 15px 25px 25px 25px;">
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const dataContainer = document.getElementById('room1');
+
+            // Hàm để hiển thị một mục mới
+            function displayNewItem(item) {
+                const itemRoom = document.createElement('div');
+                itemRoom.id = "item"
+
+                const nameRoom = document.createElement('span');
+                nameRoom.id = "txtName"
+                nameRoom.textContent = item.name;
+
+                const text = document.createElement('span');
+                text.id = "text"
+                text.textContent = " đã gửi yêu cầu: ";
+
+                const requirement = document.createElement('span');
+                requirement.id = "txtRequirement"
+                requirement.textContent = "Hết nước";
+
+                itemRoom.appendChild(nameRoom)
+                itemRoom.appendChild(text)
+                itemRoom.appendChild(requirement)
+                dataContainer.appendChild(itemRoom);
+            }
+            function fetchData() {
+                fetch('https://63b2526e5e490925c516ce9f.mockapi.io/items')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Handle the fetched data
+                        displayData(data);
+                        console.log("Làm mới")
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    })
+                    .finally(() => {
+                        // Lặp lại gửi yêu cầu lấy dữ liệu sau 5 giây
+                        setTimeout(fetchData, 3000);
+                    });
+            }
+            // Function to display data in the HTML
+            function displayData(data) {
+                // Clear previous data
+                dataContainer.innerHTML = '';
+                // Display fetched data
+                data.reverse().forEach(item => {
+                    displayNewItem(item);
+                });
+            }
+            fetchData();
+        });
+
+    </script>
+</body>
+
+</html>
