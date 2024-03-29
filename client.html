@@ -34,22 +34,19 @@
         html,
         body {
             height: 100%;
-        }
-
-        html {
-            display: table;
-            margin: auto;
-        }
-
-        body {
             /* background: #B2D9EA; */
             font-family: 'Inter', sans-serif;
             background-image: url("./background.jpg");
             background-repeat: no-repeat;
             background-position: center;
-            
+
             display: table-cell;
             vertical-align: middle;
+        }
+
+        html {
+            display: table;
+            margin: auto;
         }
 
         #call-support {
@@ -75,37 +72,24 @@
         }
 
         .item-input-radio {
-            background: #fff;
+            background: #198039;
             border-radius: 20px;
             align-items: center;
             font-size: 38px;
             height: 100px;
             padding: 0 30px;
-            border: 1px solid #214724;
-            color:#214724;
+            color: #fff;
             width: 100%;
             margin: 10px 0px;
-        }
-
-        .item-input-radio input {
-            display: inline;
-            width: 50px;
-            height: 45px;
-            border: 1px solid;
-            margin-right: 30px;
-        }
-
-        .item-input-radio span {
-            color: #214724;
-        }
-
-        input[name="radio"] {
-            accent-color: #214724;
         }
 
         .scroolbar-css::-webkit-scrollbar {
             width: 5px;
             height: 5px;
+        }
+
+        button {
+            background: #198039;
         }
     </style>
     <div class="container">
@@ -124,10 +108,84 @@
                     <button onclick="Post('Gọi món')" class="item-input-radio">
                         Gọi món
                     </button>
-                    <button onclick="Post('Dịch vụ tivi')" class="item-input-radio">
-                        Dịch vụ tivi
+                    <button onclick="openModal()" class="item-input-radio">
+                        Phản ánh
                     </button>
-                    
+                    <!-- Modal -->
+                    <style>
+                        .modal {
+                            display: none;
+                            position: fixed;
+                            z-index: 1;
+                            left: 0;
+                            top: 0;
+                            width: 100%;
+                            height: 100%;
+                            overflow: auto;
+                            background-color: rgba(0, 0, 0, 0.4);
+                        }
+
+                        /* CSS cho nội dung modal */
+                        .modal-content {
+                            background-color: #fefefe;
+                            margin: 15% auto;
+                            padding: 20px;
+                            border: 1px solid #888;
+                            width: 80%;
+                            text-align: center;
+                            border-radius: 10px;
+                        }
+
+                        textarea {
+                            width: 80%;
+                            height: 70px;
+                            border: 1px solid #198039;
+                            border-radius: 5px;
+                            padding: 10px;
+                            color: #214724;
+                            font-size: 16px;
+                            resize: none;
+                        }
+
+                        #btnModalSubmit {
+                            width: 50px;
+                        }
+
+                        #imageInputLabel {
+                            background-color: #f1f1f1;
+                            color: #214724;
+                            padding: 3px;
+                            border-radius: 5px;
+                            border: 3px solid #198039;
+                        }
+
+                        #selectedFileName {
+                            color: #214724;
+                            font-size: 16px;
+                            margin-top: 5px;
+                            margin-left: 5px;
+                        }
+                    </style>
+                    <div id="myModal" class="modal">
+                        <!-- Nội dung modal -->
+                        <div class="modal-content">
+                            <span onclick="closeModal()"
+                                style="float: right; cursor: pointer; font-size: 24px; color: #198039;">&times;</span>
+                            <h2 style="font-size: 18px; color: #198039;">Nhập nội dung phản ánh:</h2>
+                            <textarea type="text" id="userInput"></textarea>
+                            <div
+                                style="flex:0.8; display: flex; flex-direction: row; align-items: center; justify-content: center; flex-wrap: wrap; margin-top: 10px;">
+                                <label for="imageInput" id="imageInputLabel">Chọn ảnh</label>
+                                <input type="file" id="imageInput" accept="image/*" style="display:none;">
+
+                                <div id="selectedFileName"></div> <!-- Hiển thị tên tệp đã chọn -->
+                            </div>
+
+                            <br><br>
+                            <button id="btnModalSubmit" onclick="submitInput()">GỬI</button>
+                        </div>
+
+                    </div>
                 </div>
             </div>
             <div id="call-support">
@@ -146,6 +204,39 @@
 
 </body>
 <script>
+    // Xử lý khi người dùng chọn tệp
+    document.getElementById('imageInput').addEventListener('change', function (event) {
+        var selectedFile = event.target.files[0];
+        var selectedFileName = selectedFile ? selectedFile.name : 'Không có tệp được chọn';
+        var maxFileNameLength = 25;
+        if (selectedFileName.length > maxFileNameLength) {
+            selectedFileName = selectedFileName.substring(0, maxFileNameLength) + '...';
+        }
+        document.getElementById("selectedFileName").textContent = selectedFileName;
+    });
+    var imageInputLabel = document.getElementById("imageInputLabel");
+    if (imageInputLabel) {
+        imageInputLabel.textContent = "Chọn ảnh";
+    }
+
+    function submitInput() {
+        var userInput = document.getElementById("userInput").value.trim();
+        console.log(userInput)
+        // Bạn cũng có thể lấy tên tệp đã chọn ở đây nếu cần
+        //var selectedFileName = document.getElementById("selectedFileName").textContent;
+        Post("Phản ánh: ( " + userInput + " )")
+    }
+    // JavaScript để mở, đóng và xử lý modal
+    var modal = document.getElementById("myModal");
+
+    function openModal() {
+        modal.style.display = "block";
+    }
+
+    function closeModal() {
+        modal.style.display = "none";
+    }
+
     // Hiển thị bảng gửi yêu cầu hoặc thông báo chờ nhân viên
     var show = true;
     function ShowHideControl() {
@@ -166,6 +257,7 @@
 
     function Post(content) {
         ShowHideControl();
+        closeModal();
         const jsonData = { // Dữ liệu JSON bạn muốn gửi
             name: 'Phòng 01',
             requirement: content,
@@ -195,6 +287,7 @@
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
                 ShowHideControl();
+                closeModal();
             });
     }
 
